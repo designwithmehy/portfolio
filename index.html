@@ -1476,6 +1476,7 @@
   function drawSittingCat(ctx, x, y) {
     ctx.save();
     ctx.translate(x, y);
+    ctx.scale(-1, 1);
     ctx.beginPath();
     ctx.moveTo(10, 18);
     ctx.bezierCurveTo(30, 26 + Math.sin(tailPhase) * 3, 34, 14 + Math.sin(tailPhase) * 2, 26, 8);
@@ -1533,6 +1534,7 @@
   function drawRunningCat(ctx, x, y) {
     ctx.save();
     ctx.translate(x, y);
+    ctx.scale(-1, 1);
     const lf = Math.sin(legPhase);
     const lb = Math.sin(legPhase + Math.PI);
     ctx.beginPath();
