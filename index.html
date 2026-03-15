@@ -154,10 +154,11 @@
 <canvas id="catCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:9999;"></canvas>
 
 <!-- ============== NAV ============== -->
-<nav class="fixed top-0 left-0 right-0 z-50 bg-bg/80 border-b border-border/50 px-6">
+<nav class="fixed top-0 left-0 right-0 z-50 bg-bg/80 border-b border-border/50 px-6" style="backdrop-filter:blur(12px);">
   <div class="max-w-6xl mx-auto py-4 flex items-center justify-between">
     <a href="#" class="font-heading font-bold text-lg text-primary tracking-tight">mehy.</a>
-    <div class="flex items-center gap-8">
+    <!-- Desktop nav -->
+    <div class="hidden md:flex items-center gap-8">
       <a href="#work" class="font-body text-sm text-muted-fg hover:text-primary transition-colors link-underline">Work</a>
       <a href="#" id="aboutNavLink" class="font-body text-sm text-muted-fg hover:text-primary transition-colors link-underline">About</a>
       <button id="darkToggle" aria-label="Toggle dark mode" class="w-9 h-9 flex items-center justify-center rounded-lg border border-border hover:border-accent transition-colors" style="background:transparent">
@@ -166,6 +167,24 @@
       </button>
       <a href="#contact" class="px-4 py-2 bg-accent text-on-accent text-sm font-medium rounded-lg hover:bg-accent/90 transition-colors">Let's Talk</a>
     </div>
+    <!-- Mobile: dark toggle + hamburger -->
+    <div class="flex md:hidden items-center gap-3">
+      <button id="darkToggleMobile" aria-label="Toggle dark mode" class="w-9 h-9 flex items-center justify-center rounded-lg border border-border hover:border-accent transition-colors" style="background:transparent">
+        <svg id="iconSunMobile" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="text-muted-fg" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="iconMoonMobile" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="text-muted-fg"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button id="hamburger" aria-label="Open menu" class="w-9 h-9 flex flex-col items-center justify-center gap-1.5 rounded-lg border border-border hover:border-accent transition-colors" style="background:transparent">
+        <span class="block w-5 h-0.5 bg-primary rounded transition-all" id="hb1"></span>
+        <span class="block w-5 h-0.5 bg-primary rounded transition-all" id="hb2"></span>
+        <span class="block w-5 h-0.5 bg-primary rounded transition-all" id="hb3"></span>
+      </button>
+    </div>
+  </div>
+  <!-- Mobile menu dropdown -->
+  <div id="mobileMenu" class="md:hidden hidden border-t border-border/50 py-4 flex flex-col gap-4 px-2">
+    <a href="#work" id="mobileWork" class="font-body text-sm text-muted-fg hover:text-primary transition-colors py-2">Work</a>
+    <a href="#" id="aboutNavLinkMobile" class="font-body text-sm text-muted-fg hover:text-primary transition-colors py-2">About</a>
+    <a href="#contact" id="mobileTalk" class="px-4 py-2 bg-accent text-on-accent text-sm font-medium rounded-lg hover:bg-accent/90 transition-colors text-center">Let's Talk</a>
   </div>
 </nav>
 
@@ -197,7 +216,7 @@
       </p>
 
       <!-- CTA -->
-      <div class="flex items-center gap-4 reveal" style="transition-delay: 0.4s">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 reveal" style="transition-delay: 0.4s">
         <a href="#work" class="px-6 py-3 bg-primary text-on-primary font-heading font-medium text-sm rounded-lg hover:bg-accent transition-all hover:shadow-lg hover:shadow-accent/20">
           View Case Studies
         </a>
@@ -207,7 +226,7 @@
       </div>
 
       <!-- Quick stats -->
-      <div class="flex gap-10 mt-16 reveal" style="transition-delay: 0.5s">
+      <div class="flex flex-wrap gap-8 mt-16 reveal" style="transition-delay: 0.5s">
         <div>
           <!-- EDITABLE: Years stat -->
           <span class="font-heading text-3xl font-bold text-primary metric-value" data-target="6">0</span><span class="font-heading text-3xl font-bold text-accent">+</span>
@@ -254,7 +273,7 @@
           <div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-all duration-500"></div>
         </div>
         <div class="p-6">
-          <div class="flex gap-2 mb-3">
+          <div class="flex flex-wrap gap-2 mb-3">
             <span class="tag">Fintech</span>
             <span class="tag">Enterprise</span>
             <span class="tag">Workflow</span>
@@ -279,7 +298,7 @@
           <div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-all duration-500"></div>
         </div>
         <div class="p-6">
-          <div class="flex gap-2 mb-3">
+          <div class="flex flex-wrap gap-2 mb-3">
             <span class="tag">Fintech</span>
             <span class="tag">Enterprise</span>
             <span class="tag">Workflow</span>
@@ -304,7 +323,7 @@
           <div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-all duration-500"></div>
         </div>
         <div class="p-6">
-          <div class="flex gap-2 mb-3">
+          <div class="flex flex-wrap gap-2 mb-3">
             <span class="tag">Mobile web app</span>
             <span class="tag">Fintech</span>
           </div>
@@ -331,7 +350,7 @@
           </div>
         </div>
         <div class="p-6">
-          <div class="flex gap-2 mb-3">
+          <div class="flex flex-wrap gap-2 mb-3">
             <span class="tag" style="background: rgba(37,99,235,0.2); color: #93C5FD;">AI Tools</span>
             <span class="tag" style="background: rgba(37,99,235,0.2); color: #93C5FD;">Prototyping</span>
             <span class="tag" style="background: rgba(37,99,235,0.2); color: #93C5FD;">Automation</span>
@@ -1361,6 +1380,11 @@
     openAboutPanel();
   });
 
+  document.getElementById('aboutNavLinkMobile').addEventListener('click', function(e) {
+    e.preventDefault();
+    openAboutPanel();
+  });
+
   document.getElementById('aboutClose').addEventListener('click', closeAboutPanel);
 
   document.addEventListener('keydown', e => {
@@ -1621,11 +1645,54 @@
 
   // ===== Dark Mode Toggle =====
   (function() {
-    var btn  = document.getElementById('darkToggle');
     var html = document.documentElement;
-    btn.addEventListener('click', function() {
+    function syncIcons(isDark) {
+      document.getElementById('iconSun').style.display    = isDark ? 'block' : 'none';
+      document.getElementById('iconMoon').style.display   = isDark ? 'none'  : 'block';
+      document.getElementById('iconSunMobile').style.display  = isDark ? 'block' : 'none';
+      document.getElementById('iconMoonMobile').style.display = isDark ? 'none'  : 'block';
+    }
+    syncIcons(html.classList.contains('dark'));
+    function toggle() {
       html.classList.toggle('dark');
-      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+      var isDark = html.classList.contains('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      syncIcons(isDark);
+    }
+    document.getElementById('darkToggle').addEventListener('click', toggle);
+    document.getElementById('darkToggleMobile').addEventListener('click', toggle);
+  })();
+
+  // ===== Hamburger Menu =====
+  (function() {
+    var menu = document.getElementById('mobileMenu');
+    var btn  = document.getElementById('hamburger');
+    var hb1  = document.getElementById('hb1');
+    var hb2  = document.getElementById('hb2');
+    var hb3  = document.getElementById('hb3');
+    var open = false;
+    function closeMobileMenu() {
+      open = false;
+      menu.classList.add('hidden');
+      hb1.style.transform = ''; hb1.style.marginTop = '';
+      hb2.style.opacity = '1';
+      hb3.style.transform = ''; hb3.style.marginTop = '';
+    }
+    btn.addEventListener('click', function() {
+      open = !open;
+      if (open) {
+        menu.classList.remove('hidden');
+        hb1.style.transform = 'rotate(45deg)'; hb1.style.marginTop = '7px';
+        hb2.style.opacity = '0';
+        hb3.style.transform = 'rotate(-45deg)'; hb3.style.marginTop = '-14px';
+      } else {
+        closeMobileMenu();
+      }
+    });
+    // Close menu on link click
+    ['mobileWork','aboutNavLinkMobile','mobileTalk'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('click', closeMobileMenu);
     });
   })();
 
