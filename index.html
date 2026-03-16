@@ -152,6 +152,51 @@
     #csContent > div.border-t.border-border:last-child {
       margin-top: 30px;
     }
+
+    /* ══════════════════════════════════════════════
+       LIGHT MODE — INVERTED SECTION OVERRIDES
+       #ai-showcase, #contact and footer use bg-primary
+       (dark navy) which needs a light-mode equivalent
+       ══════════════════════════════════════════════ */
+
+    html:not(.dark) #ai-showcase,
+    html:not(.dark) #contact,
+    html:not(.dark) footer.bg-primary {
+      background-color: #F4F4F5;
+    }
+    html:not(.dark) footer.bg-primary {
+      border-color: #E4E4E7;
+    }
+
+    /* Headings & body text */
+    html:not(.dark) #ai-showcase .text-on-primary,
+    html:not(.dark) #contact .text-on-primary    { color: #09090B; }
+
+    html:not(.dark) #ai-showcase .text-on-primary\/50,
+    html:not(.dark) #contact .text-on-primary\/50 { color: rgba(9,9,11,0.55); }
+
+    html:not(.dark) #ai-showcase .text-on-primary\/40,
+    html:not(.dark) #contact .text-on-primary\/40 { color: rgba(9,9,11,0.45); }
+
+    html:not(.dark) footer .text-on-primary\/30,
+    html:not(.dark) footer .text-on-primary\/30:hover { color: rgba(9,9,11,0.45); }
+
+    /* Cards & borders */
+    html:not(.dark) #ai-showcase .bg-white\/5,
+    html:not(.dark) #contact .bg-white\/5         { background-color: #FFFFFF; }
+
+    html:not(.dark) #ai-showcase .hover\:bg-white\/10:hover { background-color: rgba(0,0,0,0.04); }
+
+    html:not(.dark) #ai-showcase .border-white\/10,
+    html:not(.dark) #contact .border-white\/10    { border-color: rgba(0,0,0,0.08); }
+
+    html:not(.dark) #contact .border-white\/20    { border-color: rgba(0,0,0,0.15); }
+    html:not(.dark) #contact a.border             { color: #18181B; border-color: rgba(0,0,0,0.15); }
+    html:not(.dark) #contact a.border:hover       { border-color: #2563EB; color: #2563EB; }
+
+    /* Line-accent (section divider) */
+    html:not(.dark) #ai-showcase .line-accent,
+    html:not(.dark) #contact .line-accent { background-color: #2563EB; }
   </style>
 
   <!-- Dark mode init (before paint to avoid flash) -->
@@ -538,32 +583,50 @@
 
     <!-- ── HERO ── -->
     <div class="pb-12 border-b border-border mb-16">
-      <div class="flex items-center gap-2 mb-8">
-        <svg width="14" height="14" class="text-accent flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-        <span class="text-xs font-heading font-semibold tracking-widest text-accent uppercase">About Me</span>
-      </div>
-      <div class="mb-8">
-        <h2 class="font-heading text-4xl font-bold text-primary" style="line-height:1.05;">Designer of complex systems.</h2>
-        <h2 class="text-4xl italic" style="font-family:Georgia,'Times New Roman',serif;opacity:0.65;line-height:1.2;color:inherit;">Builder of clear experiences.</h2>
-      </div>
-      <p class="font-body text-sm text-muted-fg leading-relaxed mb-10">Senior Product Designer with 6+ years designing fintech and enterprise SaaS products across B2B and B2C platforms. I specialize in turning complex financial workflows and legacy systems into clear, scalable experiences used by advisors, operators, and investors.</p>
-      <div class="grid grid-cols-2 pt-8 border-t border-border" style="gap:24px 40px;padding-bottom:40px;">
-        <div>
-          <p class="text-xs font-heading tracking-widest uppercase mb-2 text-muted-fg" style="opacity:0.55;">Experience</p>
-          <p class="font-heading font-semibold text-primary text-sm">6+ Years</p>
+      <div style="display:flex;gap:48px;align-items:flex-start;flex-wrap:wrap;">
+
+        <!-- Text column -->
+        <div style="flex:1;min-width:260px;">
+          <div class="flex items-center gap-2 mb-8">
+            <svg width="14" height="14" class="text-accent flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            <span class="text-xs font-heading font-semibold tracking-widest text-accent uppercase">About Me</span>
+          </div>
+          <div class="mb-8">
+            <h2 class="font-heading text-4xl font-bold text-primary" style="line-height:1.05;">Designer of complex systems.</h2>
+            <h2 class="text-4xl italic" style="font-family:Georgia,'Times New Roman',serif;opacity:0.65;line-height:1.2;color:inherit;">Builder of clear experiences.</h2>
+          </div>
+          <p class="font-body text-sm text-muted-fg leading-relaxed mb-10">Senior Product Designer with 6+ years designing fintech and enterprise SaaS products across B2B and B2C platforms. I specialize in turning complex financial workflows and legacy systems into clear, scalable experiences used by advisors, operators, and investors.</p>
+          <div class="grid grid-cols-2 pt-8 border-t border-border" style="gap:24px 40px;padding-bottom:16px;">
+            <div>
+              <p class="text-xs font-heading tracking-widest uppercase mb-2 text-muted-fg" style="opacity:0.55;">Experience</p>
+              <p class="font-heading font-semibold text-primary text-sm">6+ Years</p>
+            </div>
+            <div>
+              <p class="text-xs font-heading tracking-widest uppercase mb-2 text-muted-fg" style="opacity:0.55;">Specialization</p>
+              <p class="font-heading font-semibold text-primary text-sm">SaaS, Fintech, Enterprise</p>
+            </div>
+            <div>
+              <p class="text-xs font-heading tracking-widest uppercase mb-2 text-muted-fg" style="opacity:0.55;">Focus</p>
+              <p class="font-body text-muted-fg text-sm leading-relaxed">Product Design, Design Systems, AI Tooling</p>
+            </div>
+            <div>
+              <p class="text-xs font-heading tracking-widest uppercase mb-2 text-muted-fg" style="opacity:0.55;">Status</p>
+              <p class="font-heading font-semibold text-accent text-sm">● Open to Opportunities</p>
+            </div>
+          </div>
         </div>
-        <div>
-          <p class="text-xs font-heading tracking-widest uppercase mb-2 text-muted-fg" style="opacity:0.55;">Specialization</p>
-          <p class="font-heading font-semibold text-primary text-sm">SaaS, Fintech, Enterprise</p>
+
+        <!-- Photo column -->
+        <div style="flex-shrink:0;width:210px;">
+          <div style="border-radius:14px;overflow:hidden;border:1px solid var(--card-border,rgba(228,228,231,0.5));">
+            <img
+              src="/IMG_9634.JPG"
+              alt="Mehy"
+              style="width:100%;height:280px;object-fit:cover;object-position:center top;display:block;"
+            />
+          </div>
         </div>
-        <div>
-          <p class="text-xs font-heading tracking-widest uppercase mb-2 text-muted-fg" style="opacity:0.55;">Focus</p>
-          <p class="font-body text-muted-fg text-sm leading-relaxed">Product Design, Design Systems, AI Tooling</p>
-        </div>
-        <div>
-          <p class="text-xs font-heading tracking-widest uppercase mb-2 text-muted-fg" style="opacity:0.55;">Status</p>
-          <p class="font-heading font-semibold text-accent text-sm">● Open to Opportunities</p>
-        </div>
+
       </div>
     </div>
 
