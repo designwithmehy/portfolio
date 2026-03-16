@@ -73,6 +73,25 @@
     html.dark #contact .border-white\/20 { border-color: rgba(255,255,255,0.40); }
     html.dark #contact a.border { opacity: 1; }
 
+    /* ── Always-dark sections (AI showcase, Contact, Footer) ──
+       These sections are intentionally dark in both light and dark mode */
+    #ai-showcase,
+    #contact,
+    footer.bg-primary {
+      background-color: #0D0D12;
+    }
+    /* Ensure text colours read as white/light in light mode for these sections */
+    html:not(.dark) #ai-showcase .text-on-primary,
+    html:not(.dark) #contact .text-on-primary,
+    html:not(.dark) footer .text-on-primary { color: #F4F4F5; }
+
+    html:not(.dark) #ai-showcase .text-on-primary\/50,
+    html:not(.dark) #contact .text-on-primary\/50 { color: rgba(244,244,245,0.5); }
+
+    html:not(.dark) #ai-showcase .text-on-primary\/40 { color: rgba(244,244,245,0.4); }
+
+    html:not(.dark) footer .text-on-primary\/30 { color: rgba(244,244,245,0.3); }
+
     /* Case study slide panel */
     html.dark #caseStudyPanel       { background: #18181F; border-color: #27272E; }
     html.dark #aboutPanel           { background: #0D0D12; }
@@ -524,14 +543,14 @@
         <span class="text-xs font-heading font-semibold tracking-widest text-accent uppercase">About Me</span>
       </div>
       <div class="mb-8">
-        <h2 class="font-heading text-4xl font-bold text-primary" style="line-height:1.05;">Designer who codes.</h2>
-        <h2 class="text-4xl italic" style="font-family:Georgia,'Times New Roman',serif;opacity:0.65;line-height:1.2;color:inherit;">Builder who designs.</h2>
+        <h2 class="font-heading text-4xl font-bold text-primary" style="line-height:1.05;">Designer of complex systems.</h2>
+        <h2 class="text-4xl italic" style="font-family:Georgia,'Times New Roman',serif;opacity:0.65;line-height:1.2;color:inherit;">Builder of clear experiences.</h2>
       </div>
-      <p class="font-body text-sm text-muted-fg leading-relaxed mb-10">Senior Product Designer with 7+ years shipping products across SaaS, fintech, and health tech — across both B2B and B2C — from 0→1 builds to complex enterprise redesigns used by hundreds of thousands of users.</p>
+      <p class="font-body text-sm text-muted-fg leading-relaxed mb-10">Senior Product Designer with 6+ years designing fintech and enterprise SaaS products across B2B and B2C platforms. I specialize in turning complex financial workflows and legacy systems into clear, scalable experiences used by advisors, operators, and investors.</p>
       <div class="grid grid-cols-2 pt-8 border-t border-border" style="gap:24px 40px;padding-bottom:40px;">
         <div>
           <p class="text-xs font-heading tracking-widest uppercase mb-2 text-muted-fg" style="opacity:0.55;">Experience</p>
-          <p class="font-heading font-semibold text-primary text-sm">7+ Years</p>
+          <p class="font-heading font-semibold text-primary text-sm">6+ Years</p>
         </div>
         <div>
           <p class="text-xs font-heading tracking-widest uppercase mb-2 text-muted-fg" style="opacity:0.55;">Specialization</p>
@@ -610,31 +629,54 @@
       <p class="text-xs font-heading tracking-widest text-accent uppercase mb-4">Experience</p>
       <h3 class="font-heading text-3xl font-bold text-primary mb-10">Where I've worked.</h3>
       <div style="display:flex;flex-direction:column;gap:0;">
-        <div style="display:flex;gap:20px;padding-bottom:32px;border-left:2px solid;border-color:var(--tw-border-opacity,1);padding-left:24px;position:relative;border-image:linear-gradient(to bottom,#2563EB,rgba(39,39,46,0.3)) 1;">
+
+        <!-- Wedbush Securities -->
+        <div style="display:flex;gap:20px;padding-bottom:32px;border-left:2px solid;padding-left:24px;position:relative;border-image:linear-gradient(to bottom,#2563EB,rgba(39,39,46,0.3)) 1;">
           <div style="position:absolute;left:-5px;top:4px;width:8px;height:8px;border-radius:50%;background:#2563EB;flex-shrink:0;"></div>
           <div>
             <p class="font-heading text-sm font-semibold text-primary mb-1">Senior Product Designer</p>
-            <p class="font-body text-xs text-accent mb-2">Current Company — 2024 – Present</p>
-            <p class="font-body text-xs text-muted-fg leading-relaxed">Led mobile web redesign, design system creation, and AI-assisted prototyping workflows.</p>
+            <p class="font-body text-xs text-accent mb-2">Wedbush Securities — 2025–Present</p>
+            <p class="font-body text-xs text-muted-fg leading-relaxed">Redesigned advisor reporting and digitized a paper-based Move Money workflow with an 80% error rate, enabling advisors to complete transfers in minutes. Also designed the mobile client portal and contributed to Wedbush's design system and product brand modernization.</p>
           </div>
         </div>
+
+        <!-- Addepar -->
         <div style="display:flex;gap:20px;padding-bottom:32px;border-left:2px solid rgba(39,39,46,0.3);padding-left:24px;position:relative;">
           <div style="position:absolute;left:-5px;top:4px;width:8px;height:8px;border-radius:50%;background:rgba(39,39,46,0.6);flex-shrink:0;"></div>
           <div>
-            <p class="font-heading text-sm font-semibold text-primary mb-1">Product Designer</p>
-            <p class="font-body text-xs text-muted-fg mb-2">Previous Company — 2021 – 2024</p>
-            <p class="font-body text-xs text-muted-fg leading-relaxed">End-to-end product design for B2B SaaS. Owned the full design process from research to handoff.</p>
+            <p class="font-heading text-sm font-semibold text-primary mb-1">Senior Product Designer</p>
+            <p class="font-body text-xs text-muted-fg mb-2">Addepar — 2023–2025</p>
+            <p class="font-body text-xs text-muted-fg leading-relaxed">Designed financial planning and investment workflows for a wealth management SaaS platform used by advisors. Conducted usability testing with financial professionals and contributed scalable components to the product design system.</p>
           </div>
         </div>
+
+        <!-- TrackTik -->
+        <div style="display:flex;gap:20px;padding-bottom:32px;border-left:2px solid rgba(39,39,46,0.3);padding-left:24px;position:relative;">
+          <div style="position:absolute;left:-5px;top:4px;width:8px;height:8px;border-radius:50%;background:rgba(39,39,46,0.6);flex-shrink:0;"></div>
+          <div>
+            <p class="font-heading text-sm font-semibold text-primary mb-1">Senior Product Designer</p>
+            <p class="font-body text-xs text-muted-fg mb-2">TrackTik / Trackforce Valiant — 2022–2023</p>
+            <p class="font-body text-xs text-muted-fg leading-relaxed">Improved enterprise workforce management software through UX research and heuristic evaluations, reducing user friction by ~20%. Led research and design for the platform's roles and permissions system.</p>
+          </div>
+        </div>
+
+        <!-- Canada Life -->
         <div style="display:flex;gap:20px;padding-left:24px;position:relative;">
           <div style="position:absolute;left:-5px;top:4px;width:8px;height:8px;border-radius:50%;background:rgba(39,39,46,0.6);flex-shrink:0;"></div>
           <div>
-            <p class="font-heading text-sm font-semibold text-primary mb-1">UI/UX Designer</p>
-            <p class="font-body text-xs text-muted-fg mb-2">Earlier Role — 2019 – 2021</p>
-            <p class="font-body text-xs text-muted-fg leading-relaxed">Consumer mobile apps and design systems. First exposure to shipping at scale.</p>
+            <p class="font-heading text-sm font-semibold text-primary mb-1">Senior UX Designer</p>
+            <p class="font-body text-xs text-muted-fg mb-2">Canada Life — 2019–2022</p>
+            <p class="font-body text-xs text-muted-fg leading-relaxed">Designed digital financial tools for advisors and customers, including an insurance quoting tool that increased quote completion by 30%. Contributed to the company's design system and large-scale product redesign.</p>
           </div>
         </div>
+
       </div>
+    </div>
+
+    <!-- ── OUTSIDE WORK ── -->
+    <div class="mb-16">
+      <p class="text-xs font-heading tracking-widest text-accent uppercase mb-4">Outside of Work</p>
+      <p class="font-body text-sm text-muted-fg leading-relaxed">I enjoy baking, percussion, dancing, and designing creative projects like coloring books.</p>
     </div>
 
     <div class="pt-8 border-t border-border">
