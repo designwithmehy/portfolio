@@ -183,7 +183,7 @@
 </nav>
 
 <!-- Full-screen mobile menu overlay -->
-<div id="mobileMenu" style="display:none;position:fixed;inset:0;z-index:200;flex-direction:column;opacity:0;transition:opacity 0.3s ease;">
+<div id="mobileMenu" style="display:none;position:fixed;inset:0;z-index:9999;flex-direction:column;opacity:1;">
   <!-- Close button -->
   <div style="display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid rgba(255,255,255,0.08);">
     <span class="font-heading font-bold text-lg text-primary">mehy.</span>
@@ -192,7 +192,7 @@
     </button>
   </div>
   <!-- Nav links -->
-  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 24px;gap:0;">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-start;padding:32px 24px 0;gap:0;">
     <a href="#work" id="mobileWork" class="font-heading font-bold text-primary hover:text-accent transition-colors" style="font-size:2.25rem;padding:16px 0;border-bottom:1px solid rgba(128,128,128,0.15);">Work</a>
     <a href="#" id="aboutNavLinkMobile" class="font-heading font-bold text-primary hover:text-accent transition-colors" style="font-size:2.25rem;padding:16px 0;border-bottom:1px solid rgba(128,128,128,0.15);">About</a>
     <a href="#contact" id="mobileTalk" class="font-heading font-bold text-primary hover:text-accent transition-colors" style="font-size:2.25rem;padding:16px 0;">Let's Talk</a>
@@ -1688,7 +1688,6 @@
       var isDark = document.documentElement.classList.contains('dark');
       menu.style.background = isDark ? '#0D0D12' : '#FAFAFA';
       menu.style.display = 'flex';
-      requestAnimationFrame(function() { menu.style.opacity = '1'; });
       document.body.style.overflow = 'hidden';
       hb1.style.transform = 'rotate(45deg)'; hb1.style.marginTop = '8px';
       hb2.style.opacity = '0';
@@ -1697,8 +1696,7 @@
 
     function closeMobileMenu() {
       open = false;
-      menu.style.opacity = '0';
-      setTimeout(function() { menu.style.display = 'none'; }, 300);
+      menu.style.display = 'none';
       document.body.style.overflow = '';
       hb1.style.transform = ''; hb1.style.marginTop = '';
       hb2.style.opacity = '1';
