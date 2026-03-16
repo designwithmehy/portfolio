@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fund Transfer Workflow Redesign — Mehy</title>
+  <meta name="description" content="How I transformed a multi-day manual transfer process into a guided workflow completed in minutes.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../dist/output.css">
+
+  <style>
+    body { transition: background-color 0.3s ease, color 0.3s ease; }
+
+    html.dark body                  { background: #0D0D12; color: #F4F4F5; }
+    html.dark .text-primary         { color: #F4F4F5; }
+    html.dark .text-secondary       { color: #D4D4D8; }
+    html.dark .text-muted-fg        { color: #A1A1AA; }
+    html.dark .bg-card              { background-color: #18181F; }
+    html.dark .bg-muted             { background-color: #18181F; }
+    html.dark .bg-muted\/50         { background-color: rgba(24,24,31,0.5); }
+    html.dark .bg-bg\/80            { background-color: rgba(13,13,18,0.88); }
+    html.dark .bg-primary           { background-color: #0A0A10; }
+    html.dark .border-border        { border-color: #27272E; }
+    html.dark .border-border\/50    { border-color: rgba(39,39,46,0.5); }
+    html.dark .border-primary       { border-color: #F4F4F5; }
+    html.dark .hover\:text-primary:hover    { color: #F4F4F5; }
+    html.dark .hover\:border-primary:hover  { border-color: #F4F4F5; }
+    html.dark #iconSun  { display: block !important; }
+    html.dark #iconMoon { display: none  !important; }
+
+    .cs-nav-bar { background-color: rgba(250,250,250,0.92); border-bottom: 1px solid #E4E4E7; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    html.dark .cs-nav-bar { background-color: rgba(13,13,18,0.92); border-color: #27272E; }
+
+    html.dark .shadow-lg  { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5), 0 4px 6px -4px rgba(0,0,0,0.4); }
+    html.dark .shadow-xl  { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.6), 0 8px 10px -6px rgba(0,0,0,0.5); }
+
+    :root {
+      --card-bg:            rgba(245, 245, 246, 0.4);
+      --card-border:        rgba(228, 228, 231, 0.5);
+      --card-radius:        0.75rem;
+      --card-shadow:        0 1px 1px #091e4240, 0 0 1px 0 #091e424f;
+      --card-shadow-hover:  0 8px 16px -4px #091e4240, 0 0 1px #091e4221;
+      --card-transition:    box-shadow 0.3s ease-in-out, border-color 0.6s ease-in;
+    }
+    html.dark {
+      --card-bg:            rgba(24, 24, 31, 0.4);
+      --card-border:        rgba(39, 39, 46, 0.5);
+      --card-shadow:        none;
+      --card-shadow-hover:  0 20px 48px -8px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.18);
+    }
+
+    .cs-card {
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      border-radius: var(--card-radius);
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      box-shadow: none;
+      transition: var(--card-transition);
+    }
+    .cs-card:hover { box-shadow: var(--card-shadow-hover); }
+    .cs-card.stat { align-items: center; text-align: center; padding: 32px 20px; }
+    .cs-card.lg { padding: 24px; }
+    .cs-card.note { padding: 16px 20px; }
+  </style>
+
+  <script>
+    (function() {
+      var saved = localStorage.getItem('theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (saved === 'dark' || (!saved && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+</head>
+
+<body class="noise">
+
+<!-- Cat Cursor -->
+<canvas id="catCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:9999;"></canvas>
+
+<!-- Sticky Nav -->
+<div class="cs-nav-bar" style="position:sticky;top:0;z-index:50;">
+  <div style="max-width:72rem;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;">
+    <a href="../index.html#work" class="flex items-center gap-2 text-muted-fg hover:text-accent transition-colors font-heading text-sm font-medium" style="text-decoration:none;">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back to Work
+    </a>
+    <!-- Dark mode toggle -->
+    <button id="darkToggle" style="background:none;border:none;cursor:pointer;padding:4px;" class="text-muted-fg hover:text-accent transition-colors" aria-label="Toggle dark mode">
+      <svg id="iconMoon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      <svg id="iconSun"  width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="display:none;"><circle cx="12" cy="12" r="5"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Content -->
+<div style="max-width:72rem;margin:0 auto;padding:4rem 24px 5rem;">
+
+  <!-- ── HERO ──────────────────────────────────────────────── -->
+  <div class="pb-12 border-b border-border mb-16">
+    <div class="flex items-center gap-2 mb-8">
+      <svg width="14" height="14" class="text-accent flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      <span class="text-xs font-heading font-semibold tracking-widest text-accent uppercase">Efficiency Redesign</span>
+    </div>
+    <div class="mb-8">
+      <h2 class="font-heading text-4xl font-bold text-primary" style="line-height:1.05;">Fund Transfer</h2>
+      <h2 class="text-4xl italic" style="font-family:Georgia,'Times New Roman',serif;opacity:0.65;line-height:1.2;color:inherit;">Workflow Redesign</h2>
+    </div>
+    <p class="font-body text-sm text-muted-fg leading-relaxed mb-10">Transformed a multi-day manual transfer process into a guided workflow completed in minutes — eliminating external spreadsheet dependency and reducing error risk across high-value client accounts.</p>
+    <div class="grid grid-cols-2 pt-8 border-t border-border" style="gap:24px 40px;padding-bottom:40px;">
+      <div>
+        <p class="text-xs font-heading tracking-widest uppercase mb-2 text-muted-fg" style="opacity:0.55;">Role</p>
+        <p class="font-heading font-semibold text-primary text-sm">Senior Product Designer</p>
+      </div>
+      <div>
+        <p class="text-xs font-heading tracking-widest uppercase mb-2 text-muted-fg" style="opacity:0.55;">Users</p>
+        <p class="font-heading font-semibold text-primary text-sm">Financial Advisors, Client Services</p>
+      </div>
+      <div>
+        <p class="text-xs font-heading tracking-widest uppercase mb-2 text-muted-fg" style="opacity:0.55;">Scope</p>
+        <p class="font-body text-muted-fg text-sm leading-relaxed">User Research, Digital Submission Flows, Paper-to-Digital, Usability Testing</p>
+      </div>
+      <div>
+        <p class="text-xs font-heading tracking-widest uppercase mb-2 text-muted-fg" style="opacity:0.55;">Outcome</p>
+        <p class="font-heading font-semibold text-accent text-sm">30% Time Reduction</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── THE PROBLEM ───────────────────────────────────────── -->
+  <div class="mb-16">
+    <p class="text-xs font-heading tracking-widest text-accent uppercase mb-4">The Problem</p>
+    <h3 class="font-heading text-3xl font-bold text-primary mb-10">A fragmented process burdened by manual effort.</h3>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+
+      <div class="cs-card">
+        <div class="text-accent mb-4"><svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <p class="font-heading font-bold text-primary text-sm mb-2">High Time Cost</p>
+        <p class="font-body text-xs text-muted-fg leading-relaxed">Multi-day transfers driven by disconnected steps, external spreadsheets, and manual calculations.</p>
+      </div>
+
+      <div class="cs-card">
+        <div class="text-accent mb-4"><svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v4m0 4h.01"/></svg></div>
+        <p class="font-heading font-bold text-primary text-sm mb-2">Manual Risk</p>
+        <p class="font-body text-xs text-muted-fg leading-relaxed">Error-prone Excel calculations outside the system.</p>
+      </div>
+
+      <div class="cs-card">
+        <div class="text-accent mb-4"><svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 10h10M4 14h16M4 18h10"/></svg></div>
+        <p class="font-heading font-bold text-primary text-sm mb-2">Repetitive Entry</p>
+        <p class="font-body text-xs text-muted-fg leading-relaxed">Redundant transaction data entry across steps.</p>
+      </div>
+
+      <div class="cs-card">
+        <div class="text-accent mb-4"><svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M12 9v2m0 4h.01M5.07 19H19a2 2 0 001.75-2.97L13.75 4a2 2 0 00-3.5 0L3.25 16.03A2 2 0 005.07 19z"/></svg></div>
+        <p class="font-heading font-bold text-primary text-sm mb-2">Inconsistency</p>
+        <p class="font-body text-xs text-muted-fg leading-relaxed">Personal workarounds led to execution gaps.</p>
+      </div>
+
+      <div class="cs-card">
+        <div class="text-accent mb-4"><svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg></div>
+        <p class="font-heading font-bold text-primary text-sm mb-2">Low Learnability</p>
+        <p class="font-body text-xs text-muted-fg leading-relaxed">Steep learning curve for new advisors.</p>
+      </div>
+
+      <div class="cs-card">
+        <div class="text-accent mb-4"><svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
+        <p class="font-heading font-bold text-primary text-sm mb-2">Client Risk</p>
+        <p class="font-body text-xs text-muted-fg leading-relaxed">Potential dissatisfaction due to delays or errors.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── MY APPROACH ───────────────────────────────────────── -->
+  <div class="mb-16">
+    <p class="text-xs font-heading tracking-widest text-accent uppercase mb-4">My Approach</p>
+    <h3 class="font-heading text-3xl font-bold text-primary mb-10">Research first, always.</h3>
+    <div style="display:flex;flex-direction:column;gap:20px;">
+
+      <div class="flex gap-5">
+        <span class="font-heading font-bold flex-shrink-0" style="font-size:32px;line-height:1;width:36px;opacity:0.18;color:inherit;">1</span>
+        <div>
+          <p class="font-heading font-bold text-primary text-sm mb-2">Contextual Inquiry</p>
+          <p class="font-body text-xs text-muted-fg leading-relaxed">Shadowed 4 financial advisors through complete end-to-end transfer workflows — not the documented process, but what advisors actually did, including their spreadsheet workarounds.</p>
+        </div>
+      </div>
+
+      <div class="flex gap-5">
+        <span class="font-heading font-bold flex-shrink-0" style="font-size:32px;line-height:1;width:36px;opacity:0.18;color:inherit;">2</span>
+        <div>
+          <p class="font-heading font-bold text-primary text-sm mb-2">As-Is Journey Mapping</p>
+          <p class="font-body text-xs text-muted-fg leading-relaxed">Mapped the full workflow: 10 discrete steps, 5 handoff points, 3 external tools. Found that 60%+ of errors occurred specifically during the manual allocation phase.</p>
+        </div>
+      </div>
+
+      <div class="flex gap-5">
+        <span class="font-heading font-bold flex-shrink-0" style="font-size:32px;line-height:1;width:36px;opacity:0.18;color:inherit;">3</span>
+        <div>
+          <p class="font-heading font-bold text-primary text-sm mb-2">Co-Design Workshops</p>
+          <p class="font-body text-xs text-muted-fg leading-relaxed">Ran collaborative sessions with power users and compliance leads to validate the consolidated flow before committing to high-fidelity design — reducing costly late-stage pivots.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── PROTOTYPE ─────────────────────────────────────────── -->
+  <div class="mb-16 text-center">
+    <p class="text-xs font-heading tracking-widest text-accent uppercase mb-4">Prototype</p>
+    <h3 class="font-heading text-3xl font-bold text-primary mb-4">Interactive Prototype</h3>
+    <p class="font-body text-sm text-muted-fg leading-relaxed mb-8" style="max-width:540px;margin-left:auto;margin-right:auto;">The redesigned flow collapses 10 manual steps into a single guided event — with inline allocation, automated transaction preview, and real-time validation before anything is committed.</p>
+    <div class="rounded-xl border border-border overflow-hidden" style="height:700px;">
+      <iframe src="https://transaction-wizard.replit.app" title="Interactive Prototype" style="width:100%;height:100%;border:none;"></iframe>
+    </div>
+  </div>
+
+  <!-- ── OUTCOME ───────────────────────────────────────────── -->
+  <div class="mb-12">
+    <div class="text-center mb-12">
+      <p class="text-xs font-heading tracking-widest text-accent uppercase mb-4">Outcome</p>
+      <h3 class="font-heading text-3xl font-bold text-primary mb-4">An operational transformation,<br>not just a redesign.</h3>
+      <p class="font-body text-sm text-muted-fg leading-relaxed" style="max-width:480px;margin-left:auto;margin-right:auto;margin-bottom:30px;">What took days now takes minutes. That's not a UX improvement — it's an operational transformation that directly reduced client risk and contributed to a major retention win.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+
+      <div class="text-center" style="padding:20px 8px;">
+        <div class="flex items-center justify-center mb-4 text-accent mx-auto" style="width:44px;height:44px;border-radius:50%;border:1.5px solid currentColor;">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <p class="font-heading text-xl font-bold text-primary mb-2">Days to Minutes</p>
+        <p class="font-body text-xs text-muted-fg tracking-widest">Transfer completion time</p>
+      </div>
+
+      <div class="text-center" style="padding:20px 8px;">
+        <div class="flex items-center justify-center mb-4 text-accent mx-auto" style="width:44px;height:44px;border-radius:50%;border:1.5px solid currentColor;">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        </div>
+        <p class="font-heading text-xl font-bold text-primary mb-2">Tools consolidated</p>
+        <p class="font-body text-xs text-muted-fg tracking-widest">Manual spreadsheets eliminated</p>
+      </div>
+
+      <div class="text-center" style="padding:20px 8px;">
+        <div class="flex items-center justify-center mb-4 text-accent mx-auto" style="width:44px;height:44px;border-radius:50%;border:1.5px solid currentColor;">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0112 0v2"/></svg>
+        </div>
+        <p class="font-heading text-xl font-bold text-primary mb-2">Weeks to days</p>
+        <p class="font-body text-xs text-muted-fg tracking-widest">Advisor onboarding time</p>
+      </div>
+
+      <div class="text-center" style="padding:20px 8px;">
+        <div class="flex items-center justify-center mb-4 text-accent mx-auto" style="width:44px;height:44px;border-radius:50%;border:1.5px solid currentColor;">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        </div>
+        <p class="font-heading text-xl font-bold text-accent mb-2">1 client retained</p>
+        <p class="font-body text-xs text-muted-fg tracking-widest">At risk of churn</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="pt-8 border-t border-border" style="margin-top:40px;">
+    <p class="font-body text-xs text-muted-fg italic" style="opacity:0.5;">Wireframes, research artifacts, and prototype available upon request.</p>
+  </div>
+
+  <!-- Bottom back button -->
+  <div style="padding:3rem 0 2rem;text-align:center;">
+    <a href="../index.html#work" class="flex items-center gap-2 text-muted-fg hover:text-accent transition-colors font-heading text-sm font-medium" style="margin:0 auto;display:inline-flex;text-decoration:none;">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back to Work
+    </a>
+  </div>
+
+</div>
+
+<script>
+  // Dark mode toggle
+  document.getElementById('darkToggle').addEventListener('click', function() {
+    var html = document.documentElement;
+    if (html.classList.contains('dark')) {
+      html.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    } else {
+      html.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    }
+  });
+
+  // ===== Cat Cursor =====
+  const catCanvas = document.getElementById('catCanvas');
+  const catCtx = catCanvas.getContext('2d');
+  function resizeCatCanvas() { catCanvas.width = window.innerWidth; catCanvas.height = window.innerHeight; }
+  resizeCatCanvas();
+  window.addEventListener('resize', resizeCatCanvas);
+  const cursorStyle = document.createElement('style');
+  cursorStyle.textContent = '* { cursor: none !important; }';
+  document.head.appendChild(cursorStyle);
+  let mouseX = 0, mouseY = 0, catX = -100, catY = -100, lastMoveTime = 0, isMoving = false;
+  let legPhase = 0, tailPhase = 0, blinkTimer = Math.random() * 180 + 60, isBlinking = false, blinkFrame = 0, frameCount = 0;
+  let meowAlpha = 0, meowPhase = 'wait', meowCd = 600;
+  let FUR = '#2D2D2D';
+  const EYE = '#60A5FA', INNER = '#F472B6', SHINE = 'rgba(255,255,255,0.85)';
+  function drawMeow(x, y) {
+    if (meowAlpha <= 0) return;
+    catCtx.save(); catCtx.globalAlpha = meowAlpha;
+    const text = 'meow'; catCtx.font = '600 12px system-ui, sans-serif';
+    const tw = catCtx.measureText(text).width;
+    const pad = 9, bw = tw + pad*2, bh = 24, r = 6, bx = x + 4, by = y - 44;
+    catCtx.beginPath(); catCtx.moveTo(bx+r, by);
+    catCtx.lineTo(bx+bw-r, by); catCtx.arcTo(bx+bw, by, bx+bw, by+r, r);
+    catCtx.lineTo(bx+bw, by+bh-r); catCtx.arcTo(bx+bw, by+bh, bx+bw-r, by+bh, r);
+    catCtx.lineTo(bx+r, by+bh); catCtx.arcTo(bx, by+bh, bx, by+bh-r, r);
+    catCtx.lineTo(bx, by+r); catCtx.arcTo(bx, by, bx+r, by, r); catCtx.closePath();
+    catCtx.fillStyle = document.documentElement.classList.contains('dark') ? 'rgba(40,40,50,0.92)' : 'rgba(255,255,255,0.92)';
+    catCtx.fill();
+    catCtx.strokeStyle = document.documentElement.classList.contains('dark') ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.12)';
+    catCtx.lineWidth = 1; catCtx.stroke();
+    const tx = bx + 6, ty = by + bh - 5;
+    catCtx.beginPath(); catCtx.moveTo(tx, by+bh); catCtx.lineTo(tx+4, by+bh+5); catCtx.lineTo(tx+8, by+bh); catCtx.closePath();
+    catCtx.fillStyle = document.documentElement.classList.contains('dark') ? 'rgba(40,40,50,0.92)' : 'rgba(255,255,255,0.92)'; catCtx.fill();
+    catCtx.strokeStyle = document.documentElement.classList.contains('dark') ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.12)'; catCtx.stroke();
+    catCtx.fillStyle = document.documentElement.classList.contains('dark') ? '#F4F4F5' : '#18181F';
+    catCtx.fillText(text, bx+pad, by+16); catCtx.restore();
+  }
+  function drawCat(x, y, moving) {
+    const s = 1, c = catCtx;
+    FUR = document.documentElement.classList.contains('dark') ? '#C0C0C8' : '#2D2D2D';
+    c.save(); c.translate(x, y);
+    // tail
+    const tAngle = moving ? Math.sin(tailPhase) * 0.5 : Math.sin(tailPhase * 0.3) * 0.25;
+    c.save(); c.translate(-6*s, 2*s); c.rotate(tAngle);
+    c.beginPath(); c.moveTo(0,0); c.quadraticCurveTo(-10*s, -8*s, -14*s, -16*s);
+    c.strokeStyle = FUR; c.lineWidth = 3*s; c.lineCap = 'round'; c.stroke(); c.restore();
+    // legs
+    if (moving) {
+      const l1 = Math.sin(legPhase) * 3, l2 = Math.sin(legPhase + Math.PI) * 3;
+      c.strokeStyle = FUR; c.lineWidth = 2.5*s; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(-4*s, 6*s); c.lineTo(-4*s, 12*s + l1); c.stroke();
+      c.beginPath(); c.moveTo(4*s, 6*s); c.lineTo(4*s, 12*s + l2); c.stroke();
+    } else {
+      c.strokeStyle = FUR; c.lineWidth = 2.5*s; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(-4*s, 6*s); c.lineTo(-4*s, 12*s); c.stroke();
+      c.beginPath(); c.moveTo(4*s, 6*s); c.lineTo(4*s, 12*s); c.stroke();
+    }
+    // body
+    c.beginPath(); c.ellipse(0, 4*s, 8*s, 7*s, 0, 0, Math.PI*2);
+    c.fillStyle = FUR; c.fill();
+    // head
+    c.beginPath(); c.arc(0, -6*s, 8*s, 0, Math.PI*2);
+    c.fillStyle = FUR; c.fill();
+    // ears
+    c.beginPath(); c.moveTo(-6*s,-12*s); c.lineTo(-9*s,-18*s); c.lineTo(-2*s,-12*s); c.closePath();
+    c.fillStyle = FUR; c.fill();
+    c.beginPath(); c.moveTo(6*s,-12*s); c.lineTo(9*s,-18*s); c.lineTo(2*s,-12*s); c.closePath();
+    c.fillStyle = FUR; c.fill();
+    // inner ears
+    c.beginPath(); c.moveTo(-5.5*s,-13*s); c.lineTo(-8*s,-17*s); c.lineTo(-3*s,-13*s); c.closePath();
+    c.fillStyle = INNER; c.fill();
+    c.beginPath(); c.moveTo(5.5*s,-13*s); c.lineTo(8*s,-17*s); c.lineTo(3*s,-13*s); c.closePath();
+    c.fillStyle = INNER; c.fill();
+    // eyes
+    if (!isBlinking) {
+      c.beginPath(); c.arc(-3*s,-6*s,2.2*s,0,Math.PI*2); c.fillStyle=EYE; c.fill();
+      c.beginPath(); c.arc(3*s,-6*s,2.2*s,0,Math.PI*2); c.fillStyle=EYE; c.fill();
+      c.beginPath(); c.arc(-3*s,-6*s,1*s,0,Math.PI*2); c.fillStyle='#111'; c.fill();
+      c.beginPath(); c.arc(3*s,-6*s,1*s,0,Math.PI*2); c.fillStyle='#111'; c.fill();
+      c.beginPath(); c.arc(-2.4*s,-6.5*s,0.6*s,0,Math.PI*2); c.fillStyle=SHINE; c.fill();
+      c.beginPath(); c.arc(3.6*s,-6.5*s,0.6*s,0,Math.PI*2); c.fillStyle=SHINE; c.fill();
+    } else {
+      const prog = blinkFrame / 4;
+      const ey = -6*s, squeeze = prog < 0.5 ? prog*2 : (1-prog)*2;
+      c.save(); c.beginPath(); c.ellipse(-3*s,ey,2.2*s,2.2*s*(1-squeeze*0.9),0,0,Math.PI*2);
+      c.fillStyle=EYE; c.fill(); c.restore();
+      c.save(); c.beginPath(); c.ellipse(3*s,ey,2.2*s,2.2*s*(1-squeeze*0.9),0,0,Math.PI*2);
+      c.fillStyle=EYE; c.fill(); c.restore();
+    }
+    // whiskers
+    c.strokeStyle = document.documentElement.classList.contains('dark') ? 'rgba(200,200,210,0.6)' : 'rgba(0,0,0,0.25)';
+    c.lineWidth = 0.8; c.lineCap = 'round';
+    [[-8,-5,-14,-4],[-8,-4,-14,-6],[8,-5,14,-4],[8,-4,14,-6]].forEach(([x1,y1,x2,y2])=>{
+      c.beginPath(); c.moveTo(x1*s,y1*s); c.lineTo(x2*s,y2*s); c.stroke();
+    });
+    // nose
+    c.beginPath(); c.arc(0,-3.5*s,1.2*s,0,Math.PI*2); c.fillStyle='#F472B6'; c.fill();
+    c.restore();
+  }
+  window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; lastMoveTime = Date.now(); isMoving = true; });
+  window.addEventListener('click', () => {
+    if (meowPhase === 'wait' && meowCd <= 0) { meowPhase = 'in'; meowAlpha = 0; meowCd = 600; }
+  });
+  function animateCat() {
+    catCtx.clearRect(0, 0, catCanvas.width, catCanvas.height);
+    const now = Date.now();
+    if (now - lastMoveTime > 100) isMoving = false;
+    catX += (mouseX - catX) * 0.18; catY += (mouseY - catY) * 0.18;
+    if (isMoving) { legPhase += 0.35; tailPhase += 0.18; }
+    else { tailPhase += 0.04; }
+    frameCount++;
+    blinkTimer--;
+    if (blinkTimer <= 0 && !isBlinking) { isBlinking = true; blinkFrame = 0; blinkTimer = Math.random()*180+60; }
+    if (isBlinking) { blinkFrame++; if (blinkFrame >= 8) { isBlinking = false; blinkFrame = 0; } }
+    if (meowCd > 0) meowCd--;
+    if (meowPhase === 'in') { meowAlpha += 0.08; if (meowAlpha >= 1) { meowAlpha = 1; meowPhase = 'hold'; frameCount = 0; } }
+    else if (meowPhase === 'hold') { if (frameCount > 90) meowPhase = 'out'; }
+    else if (meowPhase === 'out') { meowAlpha -= 0.04; if (meowAlpha <= 0) { meowAlpha = 0; meowPhase = 'wait'; } }
+    drawCat(catX, catY, isMoving);
+    drawMeow(catX, catY);
+    requestAnimationFrame(animateCat);
+  }
+  animateCat();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Designing with AI — My Workflow — Mehy</title>
+  <meta name="description" content="How I leverage cutting-edge AI tools to prototype faster, generate assets, and ship at 10x speed.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../dist/output.css">
+
+  <style>
+    body { transition: background-color 0.3s ease, color 0.3s ease; }
+
+    html.dark body                  { background: #0D0D12; color: #F4F4F5; }
+    html.dark .text-primary         { color: #F4F4F5; }
+    html.dark .text-secondary       { color: #D4D4D8; }
+    html.dark .text-muted-fg        { color: #A1A1AA; }
+    html.dark .bg-card              { background-color: #18181F; }
+    html.dark .bg-muted             { background-color: #18181F; }
+    html.dark .bg-muted\/50         { background-color: rgba(24,24,31,0.5); }
+    html.dark .bg-bg\/80            { background-color: rgba(13,13,18,0.88); }
+    html.dark .bg-primary           { background-color: #0A0A10; }
+    html.dark .border-border        { border-color: #27272E; }
+    html.dark .border-border\/50    { border-color: rgba(39,39,46,0.5); }
+    html.dark .border-primary       { border-color: #F4F4F5; }
+    html.dark .hover\:text-primary:hover    { color: #F4F4F5; }
+    html.dark .hover\:border-primary:hover  { border-color: #F4F4F5; }
+    html.dark #iconSun  { display: block !important; }
+    html.dark #iconMoon { display: none  !important; }
+
+    .cs-nav-bar { background-color: rgba(250,250,250,0.92); border-bottom: 1px solid #E4E4E7; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    html.dark .cs-nav-bar { background-color: rgba(13,13,18,0.92); border-color: #27272E; }
+
+    html.dark .shadow-lg  { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5), 0 4px 6px -4px rgba(0,0,0,0.4); }
+    html.dark .shadow-xl  { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.6), 0 8px 10px -6px rgba(0,0,0,0.5); }
+
+    :root {
+      --card-bg:            rgba(245, 245, 246, 0.4);
+      --card-border:        rgba(228, 228, 231, 0.5);
+      --card-radius:        0.75rem;
+      --card-shadow:        0 1px 1px #091e4240, 0 0 1px 0 #091e424f;
+      --card-shadow-hover:  0 8px 16px -4px #091e4240, 0 0 1px #091e4221;
+      --card-transition:    box-shadow 0.3s ease-in-out, border-color 0.6s ease-in;
+    }
+    html.dark {
+      --card-bg:            rgba(24, 24, 31, 0.4);
+      --card-border:        rgba(39, 39, 46, 0.5);
+      --card-shadow:        none;
+      --card-shadow-hover:  0 20px 48px -8px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.18);
+    }
+
+    .cs-card {
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      border-radius: var(--card-radius);
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      box-shadow: none;
+      transition: var(--card-transition);
+    }
+    .cs-card:hover { box-shadow: var(--card-shadow-hover); }
+    .cs-card.stat { align-items: center; text-align: center; padding: 32px 20px; }
+    .cs-card.lg { padding: 24px; }
+    .cs-card.note { padding: 16px 20px; }
+  </style>
+
+  <script>
+    (function() {
+      var saved = localStorage.getItem('theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (saved === 'dark' || (!saved && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+</head>
+
+<body class="noise">
+
+<!-- Cat Cursor -->
+<canvas id="catCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:9999;"></canvas>
+
+<!-- Sticky Nav -->
+<div class="cs-nav-bar" style="position:sticky;top:0;z-index:50;">
+  <div style="max-width:72rem;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;">
+    <a href="../index.html#work" class="flex items-center gap-2 text-muted-fg hover:text-accent transition-colors font-heading text-sm font-medium" style="text-decoration:none;">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back to Work
+    </a>
+    <button id="darkToggle" style="background:none;border:none;cursor:pointer;padding:4px;" class="text-muted-fg hover:text-accent transition-colors" aria-label="Toggle dark mode">
+      <svg id="iconMoon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      <svg id="iconSun"  width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="display:none;"><circle cx="12" cy="12" r="5"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Content -->
+<div style="max-width:72rem;margin:0 auto;padding:4rem 24px 5rem;">
+
+  <!-- ── HERO ──────────────────────────────────────────────── -->
+  <div class="pb-12 border-b border-border mb-16">
+    <div class="flex items-center gap-2 mb-8">
+      <svg width="14" height="14" class="text-accent flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      <span class="text-xs font-heading font-semibold tracking-widest text-accent uppercase">AI-Driven Workflow</span>
+    </div>
+    <div class="mb-8">
+      <h2 class="font-heading text-4xl font-bold text-primary" style="line-height:1.05;">Designing with AI</h2>
+      <h2 class="text-4xl italic" style="font-family:Georgia,'Times New Roman',serif;opacity:0.65;line-height:1.2;color:inherit;">My Workflow</h2>
+    </div>
+    <p class="font-body text-sm text-muted-fg leading-relaxed mb-8">How I leverage cutting-edge AI tools to prototype faster, generate assets, and ship at 10x speed.</p>
+    <div class="cs-card note mb-10">
+      <p class="font-body text-xs text-muted-fg leading-relaxed"><span class="font-heading font-semibold text-accent text-xs">Note:</span> Every element you see in this portfolio — from the code and layout to the case studies and documentation — is a direct representation of this AI-driven workflow in action, primarily utilizing <span class="text-primary font-medium">Replit</span>, <span class="text-primary font-medium">Google AI Studio</span>, and <span class="text-primary font-medium">Claude Code</span> for this specific site.</p>
+    </div>
+    <div class="grid grid-cols-2 pt-8 border-t border-border" style="gap:24px 40px;padding-bottom:40px;">
+      <div>
+        <p class="text-xs font-heading tracking-widest uppercase mb-2 text-muted-fg" style="opacity:0.55;">Role</p>
+        <p class="font-heading font-semibold text-primary text-sm">Self-Directed</p>
+      </div>
+      <div>
+        <p class="text-xs font-heading tracking-widest uppercase mb-2 text-muted-fg" style="opacity:0.55;">Status</p>
+        <p class="font-heading font-semibold text-accent text-sm">● Ongoing</p>
+      </div>
+      <div>
+        <p class="text-xs font-heading tracking-widest uppercase mb-2 text-muted-fg" style="opacity:0.55;">Stack</p>
+        <p class="font-body text-muted-fg text-sm leading-relaxed">Replit, Google AI Studio, Claude Code, Cursor</p>
+      </div>
+      <div>
+        <p class="text-xs font-heading tracking-widest uppercase mb-2 text-muted-fg" style="opacity:0.55;">Team</p>
+        <p class="font-heading font-semibold text-primary text-sm">Me + AI tools</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── THE AI STACK ──────────────────────────────────────── -->
+  <div class="mb-16">
+    <p class="text-xs font-heading tracking-widest text-accent uppercase mb-4">The AI Stack</p>
+    <h3 class="font-heading text-3xl font-bold text-primary mb-10">Building modern interfaces requires a blend of design intuition and technical execution.</h3>
+    <div style="display:flex;flex-direction:column;gap:20px;">
+
+      <div class="flex gap-5">
+        <span class="font-heading font-bold flex-shrink-0" style="font-size:32px;line-height:1;width:36px;opacity:0.18;color:inherit;">1</span>
+        <div>
+          <p class="font-heading font-bold text-primary text-sm mb-2">Replit — The Prototyping Engine</p>
+          <p class="font-body text-xs text-muted-fg leading-relaxed">Replit serves as my primary environment for turning ideas into live, interactive prototypes. Its cloud-based infrastructure allows me to share functional designs with stakeholders instantly.</p>
+        </div>
+      </div>
+
+      <div class="flex gap-5">
+        <span class="font-heading font-bold flex-shrink-0" style="font-size:32px;line-height:1;width:36px;opacity:0.18;color:inherit;">2</span>
+        <div>
+          <p class="font-heading font-bold text-primary text-sm mb-2">Cursor — The Professional Accelerator</p>
+          <p class="font-body text-xs text-muted-fg leading-relaxed">While I primarily used Replit and Google AI Studio for this portfolio, Cursor is my go-to IDE in my professional role. I've successfully used it to build complex Money Movement prototypes for stakeholder demos, allowing for rapid iteration on high-fidelity financial features.</p>
+        </div>
+      </div>
+
+      <div class="flex gap-5">
+        <span class="font-heading font-bold flex-shrink-0" style="font-size:32px;line-height:1;width:36px;opacity:0.18;color:inherit;">3</span>
+        <div>
+          <p class="font-heading font-bold text-primary text-sm mb-2">Google AI Studio — The Brain</p>
+          <p class="font-body text-xs text-muted-fg leading-relaxed">I use Google AI Studio to experiment with the latest Gemini models. It's where I refine prompts, test edge cases for data generation, and brainstorm complex information architectures.</p>
+        </div>
+      </div>
+
+      <div class="flex gap-5">
+        <span class="font-heading font-bold flex-shrink-0" style="font-size:32px;line-height:1;width:36px;opacity:0.18;color:inherit;">4</span>
+        <div>
+          <p class="font-heading font-bold text-primary text-sm mb-2">Claude Code — The Architect</p>
+          <p class="font-body text-xs text-muted-fg leading-relaxed">Claude Code was instrumental in building this portfolio. It assisted in high-level structural decisions, complex logic implementation, and ensuring the codebase remained clean and scalable throughout the development process.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── THE PROCESS ───────────────────────────────────────── -->
+  <div class="mb-16">
+    <p class="text-xs font-heading tracking-widest text-accent uppercase mb-4">The Process</p>
+    <h3 class="font-heading text-3xl font-bold text-primary mb-10">Design-to-code in minutes.</h3>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">
+
+      <div class="cs-card">
+        <div class="text-accent mb-4"><svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
+        <p class="font-heading font-bold text-primary text-sm mb-2">1 — Ideation</p>
+        <p class="font-body text-xs text-muted-fg leading-relaxed">Using Google AI Studio to brainstorm user flows and edge cases.</p>
+      </div>
+
+      <div class="cs-card">
+        <div class="text-accent mb-4"><svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg></div>
+        <p class="font-heading font-bold text-primary text-sm mb-2">2 — Scaffolding</p>
+        <p class="font-body text-xs text-muted-fg leading-relaxed">Rapidly generating the project structure in Replit.</p>
+      </div>
+
+      <div class="cs-card">
+        <div class="text-accent mb-4"><svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg></div>
+        <p class="font-heading font-bold text-primary text-sm mb-2">3 — Refinement</p>
+        <p class="font-body text-xs text-muted-fg leading-relaxed">Using Cursor and Claude Code to polish the UI and implement complex interactions.</p>
+      </div>
+
+      <div class="cs-card">
+        <div class="text-accent mb-4"><svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+        <p class="font-heading font-bold text-primary text-sm mb-2">4 — Validation</p>
+        <p class="font-body text-xs text-muted-fg leading-relaxed">Deploying instant previews to gather stakeholder and user feedback.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── THE RESULT ────────────────────────────────────────── -->
+  <div class="mb-16">
+    <div class="text-center mb-12">
+      <p class="text-xs font-heading tracking-widest text-accent uppercase mb-4">The Result</p>
+      <h3 class="font-heading text-3xl font-bold text-primary mb-4">10x Productivity.</h3>
+      <p class="font-body text-sm text-muted-fg leading-relaxed" style="max-width:480px;margin-left:auto;margin-right:auto;">By integrating AI into every stage of the design process, I've reduced the time from concept to functional prototype by over 90%. More iterations, better testing, and a superior user experience.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+
+      <div class="cs-card stat">
+        <div class="flex items-center justify-center mb-4 text-accent mx-auto" style="width:44px;height:44px;border-radius:50%;border:1.5px solid currentColor;">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        </div>
+        <p class="font-heading text-3xl font-bold text-accent mb-2">90%+</p>
+        <p class="font-body text-xs text-muted-fg tracking-widest uppercase">Reduction in concept-to-prototype time</p>
+      </div>
+
+      <div class="cs-card stat">
+        <div class="flex items-center justify-center mb-4 text-accent mx-auto" style="width:44px;height:44px;border-radius:50%;border:1.5px solid currentColor;">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        </div>
+        <p class="font-heading text-3xl font-bold text-primary mb-2">10x</p>
+        <p class="font-body text-xs text-muted-fg tracking-widest uppercase">More design iterations explored</p>
+      </div>
+
+      <div class="cs-card stat">
+        <div class="flex items-center justify-center mb-4 text-accent mx-auto" style="width:44px;height:44px;border-radius:50%;border:1.5px solid currentColor;">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <p class="font-heading text-3xl font-bold text-primary mb-2">Zero</p>
+        <p class="font-body text-xs text-muted-fg tracking-widest uppercase">Handoff ambiguity for dev teams</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── DEVELOPER BLUEPRINT ───────────────────────────────── -->
+  <div class="mb-16">
+    <p class="text-xs font-heading tracking-widest text-accent uppercase mb-4">Developer Blueprint</p>
+    <h3 class="font-heading text-3xl font-bold text-primary mb-6">I design with a code-first mindset.</h3>
+    <p class="font-body text-sm text-muted-fg leading-relaxed mb-10">This portfolio isn't just a showcase — it's a living technical reference. Every prototype I build serves as a clear guide for engineering teams.</p>
+    <div style="display:flex;flex-direction:column;gap:20px;">
+
+      <div class="flex gap-5">
+        <span class="font-heading font-bold flex-shrink-0" style="font-size:32px;line-height:1;width:36px;opacity:0.18;color:inherit;">1</span>
+        <div>
+          <p class="font-heading font-bold text-primary text-sm mb-2">Interaction Specs</p>
+          <p class="font-body text-xs text-muted-fg leading-relaxed">I use AI to document complex micro-interactions, ensuring that the "feel" of the product is preserved when moving from prototype to production. Developers can use these live examples to reference timing, easing, and state transitions.</p>
+        </div>
+      </div>
+
+      <div class="flex gap-5">
+        <span class="font-heading font-bold flex-shrink-0" style="font-size:32px;line-height:1;width:36px;opacity:0.18;color:inherit;">2</span>
+        <div>
+          <p class="font-heading font-bold text-primary text-sm mb-2">Clean, Modular Code</p>
+          <p class="font-body text-xs text-muted-fg leading-relaxed">The code generated through my AI workflow (using Cursor and Claude Code) follows modern best practices. It's modular, typed, and structured to be easily integrated into large-scale production codebases.</p>
+        </div>
+      </div>
+
+      <div class="flex gap-5">
+        <span class="font-heading font-bold flex-shrink-0" style="font-size:32px;line-height:1;width:36px;opacity:0.18;color:inherit;">3</span>
+        <div>
+          <p class="font-heading font-bold text-primary text-sm mb-2">Bridging the Gap</p>
+          <p class="font-body text-xs text-muted-fg leading-relaxed">By delivering functional, code-based prototypes rather than static mocks, I eliminate the ambiguity of traditional handoffs. Developers can inspect the actual implementation, reducing friction and accelerating the build phase.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── TOOL PAIRINGS ─────────────────────────────────────── -->
+  <div class="mb-12">
+    <p class="text-xs font-heading tracking-widest text-accent uppercase mb-4">Tool Pairings</p>
+    <h3 class="font-heading text-3xl font-bold text-primary mb-10">The combinations that make it work.</h3>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+
+      <div class="cs-card lg">
+        <div class="text-accent mb-4"><svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg></div>
+        <p class="font-heading font-bold text-primary text-sm mb-2">Replit + Google AI Studio</p>
+        <p class="font-body text-xs text-muted-fg leading-relaxed">The combination of Replit's cloud environment and Google's Gemini models allows for instantaneous full-stack prototyping. I can prompt a feature in AI Studio and have it running in Replit in minutes.</p>
+      </div>
+
+      <div class="cs-card lg">
+        <div class="text-accent mb-4"><svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg></div>
+        <p class="font-heading font-bold text-primary text-sm mb-2">Cursor + Claude Code</p>
+        <p class="font-body text-xs text-muted-fg leading-relaxed">I used Claude Code to architect this portfolio's structure and logic. In my professional role, I pair it with Cursor to build complex Money Movement prototypes, delivering high-fidelity financial tools at 10x speed.</p>
+      </div>
+
+      <div class="cs-card lg">
+        <div class="text-accent mb-4"><svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+        <p class="font-heading font-bold text-primary text-sm mb-2">The Developer Blueprint</p>
+        <p class="font-body text-xs text-muted-fg leading-relaxed">I design with a code-first mindset. Every prototype serves as a technical reference for engineering teams, providing clear interaction specs and modular code that can be directly integrated into large-scale projects.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="pt-8 border-t border-border" style="margin-top:40px;">
+    <p class="font-body text-xs text-muted-fg italic" style="opacity:0.5;">This portfolio is itself the proof of concept.</p>
+  </div>
+
+  <!-- Bottom back button -->
+  <div style="padding:3rem 0 2rem;text-align:center;">
+    <a href="../index.html#work" class="flex items-center gap-2 text-muted-fg hover:text-accent transition-colors font-heading text-sm font-medium" style="margin:0 auto;display:inline-flex;text-decoration:none;">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back to Work
+    </a>
+  </div>
+
+</div>
+
+<script>
+  document.getElementById('darkToggle').addEventListener('click', function() {
+    var html = document.documentElement;
+    if (html.classList.contains('dark')) { html.classList.remove('dark'); localStorage.setItem('theme', 'light'); }
+    else { html.classList.add('dark'); localStorage.setItem('theme', 'dark'); }
+  });
+
+  // Cat Cursor
+  const catCanvas = document.getElementById('catCanvas');
+  const catCtx = catCanvas.getContext('2d');
+  function resizeCatCanvas() { catCanvas.width = window.innerWidth; catCanvas.height = window.innerHeight; }
+  resizeCatCanvas(); window.addEventListener('resize', resizeCatCanvas);
+  const cursorStyle = document.createElement('style'); cursorStyle.textContent = '* { cursor: none !important; }'; document.head.appendChild(cursorStyle);
+  let mouseX = 0, mouseY = 0, catX = -100, catY = -100, lastMoveTime = 0, isMoving = false;
+  let legPhase = 0, tailPhase = 0, blinkTimer = Math.random() * 180 + 60, isBlinking = false, blinkFrame = 0, frameCount = 0;
+  let meowAlpha = 0, meowPhase = 'wait', meowCd = 600;
+  let FUR = '#2D2D2D';
+  const EYE = '#60A5FA', INNER = '#F472B6', SHINE = 'rgba(255,255,255,0.85)';
+  function drawMeow(x, y) {
+    if (meowAlpha <= 0) return;
+    catCtx.save(); catCtx.globalAlpha = meowAlpha;
+    const text = 'meow'; catCtx.font = '600 12px system-ui, sans-serif';
+    const tw = catCtx.measureText(text).width;
+    const pad = 9, bw = tw + pad*2, bh = 24, r = 6, bx = x + 4, by = y - 44;
+    catCtx.beginPath(); catCtx.moveTo(bx+r, by); catCtx.lineTo(bx+bw-r, by); catCtx.arcTo(bx+bw, by, bx+bw, by+r, r);
+    catCtx.lineTo(bx+bw, by+bh-r); catCtx.arcTo(bx+bw, by+bh, bx+bw-r, by+bh, r);
+    catCtx.lineTo(bx+r, by+bh); catCtx.arcTo(bx, by+bh, bx, by+bh-r, r); catCtx.lineTo(bx, by+r); catCtx.arcTo(bx, by, bx+r, by, r); catCtx.closePath();
+    catCtx.fillStyle = document.documentElement.classList.contains('dark') ? 'rgba(40,40,50,0.92)' : 'rgba(255,255,255,0.92)'; catCtx.fill();
+    catCtx.strokeStyle = document.documentElement.classList.contains('dark') ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.12)'; catCtx.lineWidth = 1; catCtx.stroke();
+    const tx = bx + 6;
+    catCtx.beginPath(); catCtx.moveTo(tx, by+bh); catCtx.lineTo(tx+4, by+bh+5); catCtx.lineTo(tx+8, by+bh); catCtx.closePath();
+    catCtx.fillStyle = document.documentElement.classList.contains('dark') ? 'rgba(40,40,50,0.92)' : 'rgba(255,255,255,0.92)'; catCtx.fill();
+    catCtx.strokeStyle = document.documentElement.classList.contains('dark') ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.12)'; catCtx.stroke();
+    catCtx.fillStyle = document.documentElement.classList.contains('dark') ? '#F4F4F5' : '#18181F';
+    catCtx.fillText(text, bx+pad, by+16); catCtx.restore();
+  }
+  function drawCat(x, y, moving) {
+    const s = 1, c = catCtx;
+    FUR = document.documentElement.classList.contains('dark') ? '#C0C0C8' : '#2D2D2D';
+    c.save(); c.translate(x, y);
+    const tAngle = moving ? Math.sin(tailPhase) * 0.5 : Math.sin(tailPhase * 0.3) * 0.25;
+    c.save(); c.translate(-6*s, 2*s); c.rotate(tAngle);
+    c.beginPath(); c.moveTo(0,0); c.quadraticCurveTo(-10*s, -8*s, -14*s, -16*s);
+    c.strokeStyle = FUR; c.lineWidth = 3*s; c.lineCap = 'round'; c.stroke(); c.restore();
+    if (moving) {
+      const l1 = Math.sin(legPhase) * 3, l2 = Math.sin(legPhase + Math.PI) * 3;
+      c.strokeStyle = FUR; c.lineWidth = 2.5*s; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(-4*s, 6*s); c.lineTo(-4*s, 12*s + l1); c.stroke();
+      c.beginPath(); c.moveTo(4*s, 6*s); c.lineTo(4*s, 12*s + l2); c.stroke();
+    } else {
+      c.strokeStyle = FUR; c.lineWidth = 2.5*s; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(-4*s, 6*s); c.lineTo(-4*s, 12*s); c.stroke();
+      c.beginPath(); c.moveTo(4*s, 6*s); c.lineTo(4*s, 12*s); c.stroke();
+    }
+    c.beginPath(); c.ellipse(0, 4*s, 8*s, 7*s, 0, 0, Math.PI*2); c.fillStyle = FUR; c.fill();
+    c.beginPath(); c.arc(0, -6*s, 8*s, 0, Math.PI*2); c.fillStyle = FUR; c.fill();
+    c.beginPath(); c.moveTo(-6*s,-12*s); c.lineTo(-9*s,-18*s); c.lineTo(-2*s,-12*s); c.closePath(); c.fillStyle = FUR; c.fill();
+    c.beginPath(); c.moveTo(6*s,-12*s); c.lineTo(9*s,-18*s); c.lineTo(2*s,-12*s); c.closePath(); c.fillStyle = FUR; c.fill();
+    c.beginPath(); c.moveTo(-5.5*s,-13*s); c.lineTo(-8*s,-17*s); c.lineTo(-3*s,-13*s); c.closePath(); c.fillStyle = INNER; c.fill();
+    c.beginPath(); c.moveTo(5.5*s,-13*s); c.lineTo(8*s,-17*s); c.lineTo(3*s,-13*s); c.closePath(); c.fillStyle = INNER; c.fill();
+    if (!isBlinking) {
+      c.beginPath(); c.arc(-3*s,-6*s,2.2*s,0,Math.PI*2); c.fillStyle=EYE; c.fill();
+      c.beginPath(); c.arc(3*s,-6*s,2.2*s,0,Math.PI*2); c.fillStyle=EYE; c.fill();
+      c.beginPath(); c.arc(-3*s,-6*s,1*s,0,Math.PI*2); c.fillStyle='#111'; c.fill();
+      c.beginPath(); c.arc(3*s,-6*s,1*s,0,Math.PI*2); c.fillStyle='#111'; c.fill();
+      c.beginPath(); c.arc(-2.4*s,-6.5*s,0.6*s,0,Math.PI*2); c.fillStyle=SHINE; c.fill();
+      c.beginPath(); c.arc(3.6*s,-6.5*s,0.6*s,0,Math.PI*2); c.fillStyle=SHINE; c.fill();
+    } else {
+      const prog = blinkFrame / 4, ey = -6*s, squeeze = prog < 0.5 ? prog*2 : (1-prog)*2;
+      c.save(); c.beginPath(); c.ellipse(-3*s,ey,2.2*s,2.2*s*(1-squeeze*0.9),0,0,Math.PI*2); c.fillStyle=EYE; c.fill(); c.restore();
+      c.save(); c.beginPath(); c.ellipse(3*s,ey,2.2*s,2.2*s*(1-squeeze*0.9),0,0,Math.PI*2); c.fillStyle=EYE; c.fill(); c.restore();
+    }
+    c.strokeStyle = document.documentElement.classList.contains('dark') ? 'rgba(200,200,210,0.6)' : 'rgba(0,0,0,0.25)';
+    c.lineWidth = 0.8; c.lineCap = 'round';
+    [[-8,-5,-14,-4],[-8,-4,-14,-6],[8,-5,14,-4],[8,-4,14,-6]].forEach(([x1,y1,x2,y2])=>{ c.beginPath(); c.moveTo(x1*s,y1*s); c.lineTo(x2*s,y2*s); c.stroke(); });
+    c.beginPath(); c.arc(0,-3.5*s,1.2*s,0,Math.PI*2); c.fillStyle='#F472B6'; c.fill();
+    c.restore();
+  }
+  window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; lastMoveTime = Date.now(); isMoving = true; });
+  window.addEventListener('click', () => { if (meowPhase === 'wait' && meowCd <= 0) { meowPhase = 'in'; meowAlpha = 0; meowCd = 600; } });
+  function animateCat() {
+    catCtx.clearRect(0, 0, catCanvas.width, catCanvas.height);
+    const now = Date.now(); if (now - lastMoveTime > 100) isMoving = false;
+    catX += (mouseX - catX) * 0.18; catY += (mouseY - catY) * 0.18;
+    if (isMoving) { legPhase += 0.35; tailPhase += 0.18; } else { tailPhase += 0.04; }
+    frameCount++; blinkTimer--;
+    if (blinkTimer <= 0 && !isBlinking) { isBlinking = true; blinkFrame = 0; blinkTimer = Math.random()*180+60; }
+    if (isBlinking) { blinkFrame++; if (blinkFrame >= 8) { isBlinking = false; blinkFrame = 0; } }
+    if (meowCd > 0) meowCd--;
+    if (meowPhase === 'in') { meowAlpha += 0.08; if (meowAlpha >= 1) { meowAlpha = 1; meowPhase = 'hold'; frameCount = 0; } }
+    else if (meowPhase === 'hold') { if (frameCount > 90) meowPhase = 'out'; }
+    else if (meowPhase === 'out') { meowAlpha -= 0.04; if (meowAlpha <= 0) { meowAlpha = 0; meowPhase = 'wait'; } }
+    drawCat(catX, catY, isMoving); drawMeow(catX, catY);
+    requestAnimationFrame(animateCat);
+  }
+  animateCat();
+</script>
+
+</body>
+</html>
